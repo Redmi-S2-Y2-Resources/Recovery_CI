@@ -57,7 +57,7 @@ jobs:
         mkdir workspace
         cd workspace
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
-        repo init --depth=1 -u ${{ env.MANIFEST }} -b ${{ env.MANIFEST_BRANCH }}
+        repo init --depth=1 -u $MANIFEST -b $MANIFEST_BRANCH 
 
     - name: Repo Sync
       run: |
