@@ -1,4 +1,4 @@
-name: Build Recovery
+name: Build TWRP Recovery
 
 on:
   workflow_dispatch:
