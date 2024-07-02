@@ -21,6 +21,15 @@ jobs:
         sudo apt -y autoremove --purge
         sudo apt -y autoclean
         sudo apt clean
+        
+      env:
+          MANIFEST: ${{ secrets.MANIFEST }}
+          MANIFEST_BRANCH: ${{ secrets.MANIFEST_BRANCH }}
+          DEVICE_TREE: ${{ secrets.DEVICE_TREE }}
+          DEVICE_TREE_BRANCH: ${{ secrets.DEVICE_TREE_BRANCH }}
+          DEVICE_PATH: ${{ secrets.DEVICE_PATH }}
+          MAKEFILE_NAME: ${{ secrets.MAKEFILE_NAME }}
+          MAKEWHAT: ${{ secrets.MAKEWHAT }}
 
     - name: Set Swap
       uses: easimon/maximize-build-space@master
