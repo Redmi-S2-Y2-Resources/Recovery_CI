@@ -1,0 +1,12 @@
+name: Build recovery
+
+on:
+  watch:
+    types: [started]
+
+  workflow_dispatch:
+        
+jobs:
+  Build:
+    if: github.event.repository.owner.id == github.event.sender.id
+    runs-on: ubuntu-20.04
