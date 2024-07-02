@@ -30,6 +30,8 @@ jobs:
           DEVICE_PATH: ${{ secrets.DEVICE_PATH }}
           MAKEFILE_NAME: ${{ secrets.MAKEFILE_NAME }}
           MAKEWHAT: ${{ secrets.MAKEWHAT }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_EMAIL: ${{ secrets.GH_EMAIL }}
 
     - name: Set Swap
       uses: easimon/maximize-build-space@master
@@ -40,3 +42,22 @@ jobs:
         temp-reserve-mb: 1024
         remove-android: 'true'
         remove-haskell: 'true'
+
+    - name: Setup Environment
+      run: |
+        export HOME=${GITHUB_WORKSPACE}
+        cd ${GITHUB_WORKSPACE}
+        sudo apt -y install git aria2 
+        git clone https://gitlab.com/OrangeFox/misc/scripts
+        cd scripts
+        sudo bash setup/android_build_env.sh
+        sudo bash setup/install_android_sdk.sh || true
+        echo "DEVICE_NAME=$echo $DEVICE_PATH
+
+    - name: Init Repo
+      run: |
+        mkdir ${GITHUB_WORKSPACE}/workspace
+        cd ${GITHUB_WORKSPACE}/workspace
+        git config --global user.name "$GH_USERNAME"
+        git config --global user.email "$GH_EMAIL"
+        repo init --depth=1 -u $MANIFEST -b $MANIFEST_BRANCH
