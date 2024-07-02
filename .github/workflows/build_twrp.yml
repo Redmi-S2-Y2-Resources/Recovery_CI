@@ -64,7 +64,7 @@ jobs:
       env:
         DEVICE_TREE: ${{ secrets.DEVICE_TREE }}
         DEVICE_TREE_BRANCH: ${{ secrets.DEVICE_TREE_BRANCH }}
-        DEVICE_PATH: ${{ secrets.DEVICE_PATH }}
+        DEVICE_PATH: device/xiaomi/ysl
 
     - name: Building recovery
       run: |
@@ -84,5 +84,5 @@ jobs:
         path: workspace/out/target/product/$DEVICE_NAME/recoveryimage.img
 
       env:
-        DEVICE_NAME: ${{ secrets.DEVICE_NAME }}
+        DEVICE_NAME: ysl
 
