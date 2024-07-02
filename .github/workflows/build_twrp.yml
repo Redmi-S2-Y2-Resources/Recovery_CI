@@ -72,19 +72,17 @@ jobs:
         . build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
-        lunch $MAKEFILE_NAME && make clean && make $MAKEWHAT -j$(nproc --all)
+        lunch $MAKEFILE_NAME && make clean && make recoveryimage -j$(nproc --all)
 
       env:
         MAKEFILE_NAME: ${{ secrets.MAKEFILE_NAME }}
-        MAKEWHAT: ${{ secrets.MAKEWHAT }}
-
+      
     - name: Upload 
       uses: actions/upload-artifact@v3
       with:
         name: $MAKEWHAT-$DEVCE_NAME-${{ env.BUILD_TIME }}
-        path: workspace/out/target/product/$DEVICE_NAME/$MAKEWHAT.img
+        path: workspace/out/target/product/$DEVICE_NAME/recoveryimage.img
 
       env:
         DEVICE_NAME: ${{ secrets.DEVICE_NAME }}
-        MAKEWHAT: ${{ secrets.MAKEWHAT }}
 
