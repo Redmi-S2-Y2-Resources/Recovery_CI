@@ -75,7 +75,7 @@ jobs:
         lunch $MAKEFILE_NAME && make clean && make recoveryimage -j$(nproc --all)
 
       env:
-        MAKEFILE_NAME: ${{ secrets.MAKEFILE_NAME }}
+        MAKEFILE_NAME: twrp_ysl-eng
       
     - name: Upload 
       uses: actions/upload-artifact@v3
