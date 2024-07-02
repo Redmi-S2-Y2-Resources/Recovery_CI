@@ -6,17 +6,19 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-20.04
+    outputs:
+      builddate: ${{ steps.generate-builddate.outputs.builddate }}
     steps:
     - uses: actions/checkout@v3
-    - name: Setup Configuration
+    - name: Set Git Config
       run: |
-        echo "DEVICE_TREE=$(cat twrp.env | grep "DEVICE_TREE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
-        echo "DEVICE_TREE_BRANCH=$(cat twrp.env | grep "DEVICE_TREE_BRANCH" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
-        echo "DEVICE_PATH=$(cat twrp.env | grep "DEVICE_PATH" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
-        echo "MAKEFILE_NAME=$(cat twrp.env | grep "MAKEFILE_NAME" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
-        echo "MAKEWHAT=$(cat twrp.env | grep "MAKEWHAT" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
-        echo "DEVICE_NAME=$(cat twrp.env | grep "DEVICE_NAME" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        git config --global user.name "GH_USERNAME"
+        git config --global user.email "GH_EMAIL"
 
+      env:
+        GH_USERNAME: ${{ secrets.GH_USERNAME }}
+        GH_EMAIL: ${{ secrets.GH_EMAIL }}
+    
     - name: Cleanup
       uses: rokibhasansagar/slimhub_actions@main
 
@@ -58,3 +60,31 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/workspace
         git clone $DEVICE_TREE -b $DEVICE_TREE_BRANCH ./$DEVICE_PATH
+
+      env:
+        DEVICE_TREE: ${{ secrets.DEVICE_TREE }}
+        DEVICE_TREE_BRANCH: ${{ secrets.DEVICE_TREE_BRANCH }}
+        DEVICE_PATH: ${{ secrets.DEVICE_PATH }}
+
+    - name: Building recovery
+      run: |
+        cd ${GITHUB_WORKSPACE}/workspace
+        . build/envsetup.sh
+        lunch $MAKEFILE_NAME
+        echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
+        mka $MAKEWHAT -j4
+
+      env:
+        MAKEFILE_NAME: ${{ secrets.MAKEFILE_NAME }}
+        MAKEWHAT: ${{ secrets.MAKEWHAT }}
+
+    - name: Upload 
+      uses: actions/upload-artifact@v3
+      with:
+        name: $MAKEWHAT-$DEVCE_NAME-${{ env.BUILD_TIME }}
+        path: workspace/out/target/product/$DEVICE_NAME/$MAKEWHAT.img
+
+      env:
+        DEVICE_NAME: ${{ secrets.DEVICE_NAME }}
+        MAKEWHAT: ${{ secrets.MAKEWHAT }}
+
